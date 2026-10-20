@@ -1,4 +1,3 @@
-
 using System;
 using System.Windows.Forms;
 using Microsoft.VisualBasic;
@@ -7,7 +6,7 @@ namespace MateoGuapo
 {
     public partial class Form1 : Form
     {
-        // Matriz que guarda las 9 ventas.
+        // Guarda las 9 ventas.
         int[,] ventas = new int[3, 3];
 
         public Form1()
@@ -15,87 +14,72 @@ namespace MateoGuapo
             InitializeComponent();
         }
 
-        // Se ejecuta al abrir el formulario.
+        // Al abrir, oculta el botón de imprimir.
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Oculta el botón de imprimir al iniciar.
             button2.Visible = false;
         }
 
-        // BOTÓN 1: captura las 9 ventas.
+        // BOTÓN 1: captura las ventas.
         private void button1_Click(object sender, EventArgs e)
         {
-            // Recorre los renglones de la matriz.
-            for (int renglon = 0; renglon < ventas.GetLength(0); renglon++)
+            // Recorre los 3 renglones y las 3 columnas.
+            for (int i = 0; i < 3; i++)
             {
-                // Recorre las columnas de cada renglón.
-                for (int col = 0; col < ventas.GetLength(1); col++)
+                for (int j = 0; j < 3; j++)
                 {
-                    int venta;
-
-                    // Pide una venta y revisa si se canceló.
-                    if (PedirVenta(renglon, col, out venta) == false)
+                    while (true)
                     {
-                        MessageBox.Show("Captura cancelada.");
-                        return;
-                    }
+                        // Pide una venta.
+                        string dato = Interaction.InputBox(
+                            "Escribe la venta de [" + i + "," + j + "]",
+                            "Matriz de ventas");
 
-                    // Guarda la venta en su posición.
-                    ventas[renglon, col] = venta;
+                        // Si está vacío, termina la captura.
+                        if (dato == "")
+                        {
+                            MessageBox.Show("Captura cancelada.");
+                            return;
+                        }
+
+                        int venta;
+
+                        // Comprueba que sea un número entero.
+                        if (int.TryParse(dato, out venta))
+                        {
+                            ventas[i, j] = venta;
+                            break;
+                        }
+
+                        // Si no es un número, lo vuelve a pedir.
+                        MessageBox.Show("Escribe solamente números enteros.");
+                    }
                 }
             }
 
-            // Muestra el botón de imprimir cuando termina la captura.
+            // Muestra el botón de imprimir.
             button2.Visible = true;
-            MessageBox.Show("Captura terminada. Ya puedes imprimir las ventas.");
+            MessageBox.Show("Ventas guardadas correctamente.");
         }
 
-        // BOTÓN 2: muestra las ventas una por una.
+        // BOTÓN 2: muestra las ventas.
         private void button2_Click(object sender, EventArgs e)
         {
-            for (int renglon = 0; renglon < ventas.GetLength(0); renglon++)
+            for (int i = 0; i < 3; i++)
             {
-                for (int col = 0; col < ventas.GetLength(1); col++)
+                for (int j = 0; j < 3; j++)
                 {
                     MessageBox.Show(
-                        "Venta: " + ventas[renglon, col],
-                        "Posición [" + renglon + "," + col + "]");
+                        "Venta: " + ventas[i, j],
+                        "Posición [" + i + "," + j + "]");
                 }
             }
         }
 
-        // BOTÓN 3: cierra el formulario.
+        // BOTÓN 3: cierra el programa.
         private void button3_Click(object sender, EventArgs e)
         {
             this.Close();
-        }
-
-        // Pide una venta y comprueba que sea un número entero.
-        private bool PedirVenta(int renglon, int col, out int venta)
-        {
-            while (true)
-            {
-                string texto = Interaction.InputBox(
-                    "Escribe la venta de la posición ["
-                    + renglon + "," + col + "]",
-                    "Matriz de ventas", "");
-
-                // Si cancela o deja el espacio vacío, detiene la captura.
-                if (texto == "")
-                {
-                    venta = 0;
-                    return false;
-                }
-
-                // Comprueba si el dato es un número entero.
-                if (int.TryParse(texto, out venta))
-                {
-                    return true;
-                }
-
-                // Avisa si el dato no es válido.
-                MessageBox.Show("Escribe solamente números enteros.");
-            }
         }
     }
 }
