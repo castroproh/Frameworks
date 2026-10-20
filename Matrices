@@ -1,10 +1,8 @@
 
 using System;
-using System.Drawing;
 using System.Windows.Forms;
-using Microsoft.VisualBasic; // Sirve para usar InputBox.
+using Microsoft.VisualBasic;
 
-// Programa para capturar y mostrar 9 ventas.
 namespace MateoGuapo
 {
     public partial class Form1 : Form
@@ -20,50 +18,25 @@ namespace MateoGuapo
         // Se ejecuta al abrir el formulario.
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Configuración de la ventana.
-            this.Text = "MATRIZ DE VENTAS";
-            this.BackColor = Color.FromArgb(192, 255, 255);
-            this.ClientSize = new Size(700, 420);
-            this.StartPosition = FormStartPosition.CenterScreen;
-
-            // Configuración del título que agregamos manualmente.
-            label1.Text = "CAPTURA DE VENTAS (MATRIZ 3 x 3)";
-            label1.Font = new Font("Arial", 20, FontStyle.Bold);
-            label1.ForeColor = Color.DarkBlue;
-            label1.AutoSize = true;
-            label1.Location = new Point(100, 30);
-
-            // Configuración de los tres botones.
-            EstiloBoton(button1, "ALIMENTAR\nVECTOR VENTAS",
-                Color.RoyalBlue, Color.White, 80, 130, 230, 110);
-
-            EstiloBoton(button2, "IMPRIMIR LAS VENTAS\nUNA POR UNA",
-                Color.White, Color.RoyalBlue, 390, 130, 230, 110);
-
-            EstiloBoton(button3, "SALIR",
-                Color.Red, Color.Yellow, 470, 300, 150, 70);
-
-            // Ocultamos IMPRIMIR hasta capturar las ventas.
+            // Oculta el botón de imprimir al iniciar.
             button2.Visible = false;
         }
 
-        // BOTÓN 1: pide y guarda las 9 ventas.
+        // BOTÓN 1: captura las 9 ventas.
         private void button1_Click(object sender, EventArgs e)
         {
             // Recorre los renglones de la matriz.
-            for (int renglon = 0;
-                 renglon < ventas.GetLength(0); renglon++)
+            for (int renglon = 0; renglon < ventas.GetLength(0); renglon++)
             {
                 // Recorre las columnas de cada renglón.
-                for (int col = 0;
-                     col < ventas.GetLength(1); col++)
+                for (int col = 0; col < ventas.GetLength(1); col++)
                 {
                     int venta;
 
                     // Pide una venta y revisa si se canceló.
                     if (PedirVenta(renglon, col, out venta) == false)
                     {
-                        MessageBox.Show("Captura cancelada");
+                        MessageBox.Show("Captura cancelada.");
                         return;
                     }
 
@@ -72,19 +45,17 @@ namespace MateoGuapo
                 }
             }
 
-            // Muestra el botón para imprimir las ventas.
+            // Muestra el botón de imprimir cuando termina la captura.
             button2.Visible = true;
-            MessageBox.Show("¡Listo! Ya puedes imprimir las ventas");
+            MessageBox.Show("Captura terminada. Ya puedes imprimir las ventas.");
         }
 
         // BOTÓN 2: muestra las ventas una por una.
         private void button2_Click(object sender, EventArgs e)
         {
-            for (int renglon = 0;
-                 renglon < ventas.GetLength(0); renglon++)
+            for (int renglon = 0; renglon < ventas.GetLength(0); renglon++)
             {
-                for (int col = 0;
-                     col < ventas.GetLength(1); col++)
+                for (int col = 0; col < ventas.GetLength(1); col++)
                 {
                     MessageBox.Show(
                         "Venta: " + ventas[renglon, col],
@@ -99,55 +70,32 @@ namespace MateoGuapo
             this.Close();
         }
 
-        // Pide una venta y revisa que sea un número entero.
+        // Pide una venta y comprueba que sea un número entero.
         private bool PedirVenta(int renglon, int col, out int venta)
         {
             while (true)
             {
                 string texto = Interaction.InputBox(
-                    "ESCRIBA LA VENTA DE LA MATRIZ POS["
+                    "Escribe la venta de la posición ["
                     + renglon + "," + col + "]",
-                    "IG2-MATVENTAS", "");
+                    "Matriz de ventas", "");
 
-                // Si se deja vacío o se cancela, termina la captura.
+                // Si cancela o deja el espacio vacío, detiene la captura.
                 if (texto == "")
                 {
                     venta = 0;
                     return false;
                 }
 
-                // Si escribe un entero, acepta la venta.
+                // Comprueba si el dato es un número entero.
                 if (int.TryParse(texto, out venta))
                 {
                     return true;
                 }
 
-                // Si escribe letras u otro dato inválido, avisa.
-                MessageBox.Show(
-                    "TECLEE SOLO NUMEROS... OJO, FIJESE BIEN");
+                // Avisa si el dato no es válido.
+                MessageBox.Show("Escribe solamente números enteros.");
             }
-        }
-
-        // Cambia el texto, color, tamaño y posición de un botón.
-        private void EstiloBoton(
-            Button boton, string texto,
-            Color fondo, Color letra,
-            int x, int y, int ancho, int alto)
-        {
-            boton.Text = texto;
-            boton.BackColor = fondo;
-            boton.ForeColor = letra;
-            boton.Font = new Font("Arial", 14, FontStyle.Bold);
-            boton.Location = new Point(x, y);
-            boton.Size = new Size(ancho, alto);
-
-            // Da un estilo plano al botón.
-            boton.FlatStyle = FlatStyle.Flat;
-            boton.FlatAppearance.BorderColor = Color.DarkBlue;
-            boton.FlatAppearance.BorderSize = 2;
-
-            // Muestra una manita al pasar el mouse.
-            boton.Cursor = Cursors.Hand;
         }
     }
 }
